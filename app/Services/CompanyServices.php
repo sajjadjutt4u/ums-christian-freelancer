@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\company;
+use App\Models\Company;
 use App\Models\User;
 use Carbon\Carbon;
 use Jenssegers\Agent\Agent;

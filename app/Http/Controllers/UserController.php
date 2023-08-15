@@ -4,16 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\UserRegisterRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
 use App\Services\LogActivityServices;
 use App\Services\UserServices;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Jenssegers\Agent\Agent;
 
 class UserController extends Controller
 {
-    private $user_services;
-    private $log_activity_services;
+    private UserServices $user_services;
+    private LogActivityServices $log_activity_services;
 
     public function __construct(UserServices $user_services , LogActivityServices $log_activity_services)
     {
@@ -26,19 +31,38 @@ class UserController extends Controller
         dd(session('login_status'));
     }
 
-    public function login_view(){
+
+    /**
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     */
+    public function login_view(): \Illuminate\Foundation\Application|View|Factory|Application
+    {
         return view('pages.user.auth.login');
     }
 
-    public function register_view(){
+
+    /**
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     */
+    public function register_view(): \Illuminate\Foundation\Application|View|Factory|Application
+    {
         return view('pages.user.auth.register');
     }
 
-    public function forgot_password_view(){
+    /**
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     */
+    public function forgot_password_view(): \Illuminate\Foundation\Application|View|Factory|Application
+    {
         return view('pages.user.auth.forgot-password');
     }
 
-    public function user_store(UserRegisterRequest $request)
+
+    /**
+     * @param UserRegisterRequest $request
+     * @return RedirectResponse
+     */
+    public function user_store(UserRegisterRequest $request): RedirectResponse
     {
         try {
             $this->user_services->add_user($request);
@@ -50,7 +74,12 @@ class UserController extends Controller
 
     }
 
-    public function user_login(LoginUserRequest $request){
+    /**
+     * @param LoginUserRequest $request
+     * @return RedirectResponse
+     */
+    public function user_login(LoginUserRequest $request): RedirectResponse
+    {
         $user = User::where('email',$request['email'])->first();
         session(['login_status' => 'user']);
         session(['user_data' => $user]);
@@ -62,7 +91,11 @@ class UserController extends Controller
         dd($request->all());
     }
 
-    public function user_dashboard(){
+    /**
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     */
+    public function user_dashboard(): \Illuminate\Foundation\Application|View|Factory|Application
+    {
         $request = Request::capture();
         $metadata = json_decode($this->user_services->get_metadata($request),true);
         $user_data = session('user_data');
@@ -70,21 +103,46 @@ class UserController extends Controller
         return view('pages.user.dashboard',compact('user_data','metadata'));
     }
 
-    public function user_activities(){
+
+    /**
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     */
+    public function user_activities(): \Illuminate\Foundation\Application|View|Factory|Application
+    {
         $user_data = session('user_data');
         $activities = $user_data->activities()->get();
         $this->log_activity_services->add_activity();
         return view('pages.user.activities',compact('activities','user_data'));
     }
 
-    public function user_edit_profile(){
+
+    /**
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     */
+    public function user_edit_profile(): \Illuminate\Foundation\Application|View|Factory|Application
+    {
         $this->log_activity_services->add_activity();
-        return view('pages.user.profile-edit ');
+        $user_data = session('user_data');
+        return view('pages.user.profile-edit ',compact('user_data'));
     }
 
-    public function user_edit_profile_store(Request $request){
-        dd($request->all());
+
+
+    /**
+     * @param UserUpdateRequest $request
+     * @return RedirectResponse
+     */
+    public function user_edit_profile_store(UserUpdateRequest $request): RedirectResponse
+    {
+        $res = $this->user_services->update_user($request);
+        $this->log_activity_services->add_activity();
+        if($res){
+            return redirect()->route('user_edit')->with('success', 'Your profile update Successfully');
+        }
+        return redirect()->route('user_edit')->with('error', 'Your profile Not update please try again after few time');
     }
+
+
 
     public function logout(){
         $this->log_activity_services->add_activity();

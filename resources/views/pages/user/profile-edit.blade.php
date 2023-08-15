@@ -2,12 +2,12 @@
 @section('title')<title>Profile Edit</title>@endsection
 
 @section('profile_image')
-    <img src="{{asset('assets/images/faces/female/16.jpg')}}" alt="profile-user" class="avatar brround cover-image mb-1 ml-0">
+    <img  src="{{ $user_data['personal_image'] ? asset($user_data['personal_image']) : asset('assets/images/faces/profile.jpg') }}" alt="profile-user" class="avatar brround cover-image mb-1 ml-0">
 @endsection
 
 @section('profile_name')
-    <a href="#" class="dropdown-item text-center font-weight-sembold user pt-0" data-toggle="dropdown">Joyce Stewart</a>
-    <span class="text-center user-semi-title ">web designer</span>
+    <a href="#" class="dropdown-item text-center font-weight-sembold user pt-0" data-toggle="dropdown">{{$user_data['name']}}</a>
+    <span class="text-center user-semi-title ">{{$user_data['state']}}</span>
 @endsection
 
 @section('content')
@@ -32,6 +32,17 @@
                     @endforeach
                 @endif
 
+                    @if(session()->has('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if(session()->has('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                 <form class="card" method="POST" action="{{route('user_edit')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="card-header">
@@ -45,8 +56,7 @@
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <label class="form-label">User Name</label>
-                                    <input name="name" type="text" class="form-control" placeholder="User Name"
-                                           required>
+                                    <input name="name" type="text" class="form-control" placeholder="User Name" value="{{$user_data['name']}}" required>
                                 </div>
                             </div>
 
@@ -54,14 +64,14 @@
                                 <div class="form-group">
                                     <label class="form-label">phone</label>
                                     <input name="phone" type="number" class="form-control" placeholder="User phone"
-                                           min="0" oninput="validity.valid||(value='');">
+                                           min="0" oninput="validity.valid||(value='');" value="{{$user_data['phone']}}">
                                 </div>
                             </div>
 
                             <div class="col-sm-6 col-md-4">
                                 <div class="form-group">
                                     <label class="form-label">Email address</label>
-                                    <input name="email" type="email" class="form-control" placeholder="Email" required>
+                                    <input name="email" type="email" class="form-control" placeholder="Email" value="{{$user_data['email']}}" required>
                                 </div>
                             </div>
 
@@ -69,16 +79,14 @@
                             <div class="col-sm-6 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Password</label>
-                                    <input name="password" type="password" class="form-control" placeholder="Password"
-                                           required>
+                                    <input name="password" type="password" class="form-control" placeholder="Password">
                                 </div>
                             </div>
 
                             <div class="col-sm-6 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Confirm Password</label>
-                                    <input name="password_confirmation" type="password" class="form-control"
-                                           placeholder="Confirm Password" required>
+                                    <input name="password_confirmation" type="password" class="form-control" placeholder="Confirm Password">
                                 </div>
                             </div>
 
@@ -86,8 +94,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="form-label">Address</label>
-                                    <input name="address" type="text" class="form-control" placeholder="Address"
-                                           required>
+                                    <input name="address" type="text" class="form-control" placeholder="Address" value="{{$user_data['address']}}" required>
                                 </div>
                             </div>
 
@@ -96,76 +103,76 @@
                                 <div class="form-group mb-0">
                                     <label class="form-label">About Me</label>
                                     <textarea name="description" rows="5" class="form-control"
-                                              placeholder="Enter About your description"></textarea>
+                                              placeholder="Enter About your description">{{$user_data['description']}}</textarea>
                                 </div>
                             </div>
 
                             {{--    5th Row     --}}
 
-                            <div class="col-lg-6 mt-5">
-                                <div class="card shadow">
-                                    <div class="card-header">
-                                        <h3 class="mb-0 card-title">CNIC Front Side image</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <input name="cnic_front_image" type="file" class="dropify" data-height="300" accept=".jpg, .jpeg, .png">
-                                    </div>
-                                </div>
-                            </div>
+{{--                            <div class="col-lg-6 mt-5">--}}
+{{--                                <div class="card shadow">--}}
+{{--                                    <div class="card-header">--}}
+{{--                                        <h3 class="mb-0 card-title">CNIC Front Side image</h3>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="card-body">--}}
+{{--                                        <input name="cnic_front_image" type="file" class="dropify" data-height="300" accept=".jpg, .jpeg, .png">--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
 
-                            <div class="col-lg-6 mt-5">
-                                <div class="card shadow">
-                                    <div class="card-header">
-                                        <h3 class="mb-0 card-title">CNIC Back Side image</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <input name="cnic_back_image" type="file" class="dropify" data-height="300" accept=".jpg, .jpeg, .png">
-                                    </div>
-                                </div>
-                            </div>
+{{--                            <div class="col-lg-6 mt-5">--}}
+{{--                                <div class="card shadow">--}}
+{{--                                    <div class="card-header">--}}
+{{--                                        <h3 class="mb-0 card-title">CNIC Back Side image</h3>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="card-body">--}}
+{{--                                        <input name="cnic_back_image" type="file" class="dropify" data-height="300" accept=".jpg, .jpeg, .png">--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
 
                             {{--    6th Row     --}}
 
-                            <div class="col-lg-6 mt-5">
-                                <div class="card shadow">
-                                    <div class="card-header">
-                                        <h3 class="mb-0 card-title">Personal image</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <input name="personal_image" type="file" class="dropify" data-height="300" accept=".jpg, .jpeg, .png">
-                                    </div>
-                                </div>
-                            </div>
+{{--                            <div class="col-lg-6 mt-5">--}}
+{{--                                <div class="card shadow">--}}
+{{--                                    <div class="card-header">--}}
+{{--                                        <h3 class="mb-0 card-title">Personal image</h3>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="card-body">--}}
+{{--                                        <input name="personal_image" type="file" class="dropify" data-height="300" accept=".jpg, .jpeg, .png">--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
 
-                            <div class="col-lg-6 mt-5">
-                                <div class="card shadow">
-                                    <div class="card-header">
-                                        <h3 class="mb-0 card-title">Business image</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <input name="business_image" type="file" class="dropify" data-height="300" accept=".jpg, .jpeg, .png">
-                                    </div>
-                                </div>
-                            </div>
+{{--                            <div class="col-lg-6 mt-5">--}}
+{{--                                <div class="card shadow">--}}
+{{--                                    <div class="card-header">--}}
+{{--                                        <h3 class="mb-0 card-title">Business image</h3>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="card-body">--}}
+{{--                                        <input name="business_image" type="file" class="dropify" data-height="300" accept=".jpg, .jpeg, .png">--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
 
                             {{--    7th Row     --}}
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="form-label">Upload Your CV</div>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="cv"
-                                               accept=".docx, .pdf, .jpg, .jpeg, .png">
-                                        <label class="custom-file-label">Choose file</label>
-                                    </div>
-                                </div>
-                            </div>
+{{--                            <div class="col-md-12">--}}
+{{--                                <div class="form-group">--}}
+{{--                                    <div class="form-label">Upload Your CV</div>--}}
+{{--                                    <div class="custom-file">--}}
+{{--                                        <input type="file" class="custom-file-input" name="cv"--}}
+{{--                                               accept=".docx, .pdf, .jpg, .jpeg, .png">--}}
+{{--                                        <label class="custom-file-label">Choose file</label>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
 
 
                         </div>
                     </div>
 
                     <div class="card-footer text-center">
-                        <button type="submit" class="btn btn-primary-light btn-block">Register</button>
+                        <button type="submit" class="btn btn-primary-light btn-block">Update</button>
                     </div>
 
                 </form>

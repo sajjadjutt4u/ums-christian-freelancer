@@ -10,7 +10,12 @@ use Illuminate\Support\Facades\Storage;
 
 class UserServices{
 
-    public function add_user($request){
+    /**
+     * @param $request
+     * @return true
+     */
+    public function add_user($request): bool
+    {
         $data = $request->all();
 
         $state = $this->verify_state($data);
@@ -38,7 +43,44 @@ class UserServices{
         return true;
     }
 
-    public function verify_state($data){
+
+    /**
+     * @param $request
+     * @return false
+     */
+    public function update_user($request): bool
+    {
+        try {
+            $data = $request->all();
+            $user_data = session('user_data');
+
+            $res = $user_data->update([
+                'name'                      => $data['name'],
+                'email'                     => $data['email'],
+                'password'                  => $data['password'] ?? $user_data['password'],
+                'address'                   => $data['address'],
+                'phone'                     =>array_key_exists('phone',$data) ? $data['phone'] : null,
+                'description'               =>array_key_exists('description',$data) ? $data['description'] : null,
+            ]);
+
+            if ($res){
+                $user = User::where('id',$user_data['id'])->first();
+                session(['user_data' => $user]);
+            }
+
+            return $res;
+        }catch (Exception $e){
+            return false;
+        }
+    }
+
+
+    /**
+     * @param $data
+     * @return string
+     */
+    public function verify_state($data): string
+    {
         $state = 'guest';
 
         if (isset($data['personal_image'] , $data['personal_image'] , $data['cnic_front_image'] , $data['cnic_back_image'] , $data['cv'])){
@@ -48,29 +90,43 @@ class UserServices{
         return $state;
     }
 
-    public function get_image_path($image_detail){
+
+    /**
+     * @param $image_detail
+     * @return string
+     */
+    public function get_image_path($image_detail): string
+    {
         $upload_path = '/images/users';
         $num = rand(1,50);
         $extension = $image_detail->getClientOriginalExtension();
         $file_name = time().$num.'.'.$extension;
         $image_detail->move(public_path($upload_path),$file_name);
-        $final_path_name = $upload_path.'/'.$file_name;
-
-        return $final_path_name;
+        return $upload_path.'/'.$file_name;
     }
 
-    public function get_cv_docs_path($cv_detail){
+
+    /**
+     * @param $cv_detail
+     * @return string
+     */
+    public function get_cv_docs_path($cv_detail): string
+    {
         $upload_path = 'docs/users';
         $num = rand(1,50);
         $extension = $cv_detail->getClientOriginalExtension();
         $file_name = time().$num.'.'.$extension;
         $cv_detail->move(public_path($upload_path),$file_name);
-        $final_path_name = $upload_path.'/'.$file_name;
-
-        return $final_path_name;
+        return $upload_path.'/'.$file_name;
     }
 
-    public function get_metadata($request){
+
+    /**
+     * @param $request
+     * @return false|string
+     */
+    public function get_metadata($request): bool|string
+    {
         $agent = new Agent();
 
         $user_agent_data = [

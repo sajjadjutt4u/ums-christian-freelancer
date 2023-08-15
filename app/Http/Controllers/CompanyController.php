@@ -3,17 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CompanyRegisterRequest;
+use App\Http\Requests\CompanyUpdateRequest;
 use App\Http\Requests\LoginCompanyRequest;
 use App\Models\Company;
 use App\Services\CompanyServices;
 use App\Services\LogActivityServices;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
-    private $company_services;
-    private $log_activity_services;
+    private CompanyServices $company_services;
+    private LogActivityServices $log_activity_services;
 
     public function __construct(CompanyServices $company_services , LogActivityServices $log_activity_services)
     {
@@ -21,19 +26,38 @@ class CompanyController extends Controller
         $this->log_activity_services = $log_activity_services;
     }
 
-    public function login_view(){
+    /**
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     */
+    public function login_view(): \Illuminate\Foundation\Application|View|Factory|Application
+    {
         return view('pages.company.auth.login');
     }
 
-    public function register_view(){
+
+    /**
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     */
+    public function register_view(): \Illuminate\Foundation\Application|View|Factory|Application
+    {
         return view('pages.company.auth.register');
     }
 
-    public function forgot_password_view(){
+
+    /**
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     */
+    public function forgot_password_view(): \Illuminate\Foundation\Application|View|Factory|Application
+    {
         return view('pages.company.auth.forgot-password');
     }
 
-    public function company_store(CompanyRegisterRequest $request): \Illuminate\Http\RedirectResponse
+
+    /**
+     * @param CompanyRegisterRequest $request
+     * @return RedirectResponse
+     */
+    public function company_store(CompanyRegisterRequest $request): RedirectResponse
     {
         try {
             $this->company_services->add_company($request);
@@ -46,20 +70,30 @@ class CompanyController extends Controller
 
     }
 
-    public function company_login(LoginCompanyRequest $request): \Illuminate\Http\RedirectResponse
+
+    /**
+     * @param LoginCompanyRequest $request
+     * @return RedirectResponse
+     */
+    public function company_login(LoginCompanyRequest $request): RedirectResponse
     {
         $company = Company::where('email',$request['email'])->first();
         session(['login_status' => 'company']);
         session(['company_data' => $company]);
         $this->log_activity_services->add_activity();
-        return redirect()->route('company_dashboard')->with('success', 'Your are Login Successfully');
+        return redirect()->route('company_dashboard')->with('success', 'You are Login Successfully');
     }
+
 
     public function forgot_password(Request $request){
         dd($request->all());
     }
 
-    public function company_dashboard()
+
+    /**
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     */
+    public function company_dashboard(): \Illuminate\Foundation\Application|View|Factory|Application
     {
         $request = Request::capture();
         $metadata = json_decode($this->company_services->get_metadata($request),true);
@@ -68,7 +102,11 @@ class CompanyController extends Controller
         return view('pages.company.dashboard',compact('metadata','user_data'));
     }
 
-    public function company_activities()
+
+    /**
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     */
+    public function company_activities(): \Illuminate\Foundation\Application|View|Factory|Application
     {
         $user_data = session('company_data');
         $activities = $user_data->activities()->get();
@@ -76,32 +114,31 @@ class CompanyController extends Controller
         return view('pages.company.activities',compact('user_data','activities'));
     }
 
-    public function company_edit_profile(){
+
+    /**
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     */
+    public function company_edit_profile(): \Illuminate\Foundation\Application|View|Factory|Application
+    {
+
         $user_data = session('company_data');
-
-        // Extract the filename from the path
-        $filename = pathinfo($user_data['docs'],PATHINFO_BASENAME);
-
-        $docs_path_to_file = public_path('docs/companies/'.$filename);
-//        $docs_path_to_file = public_path(str_replace("\\",'/',$user_data['docs'])) ;
-
-//        dd($docs_path_to_file);
-
-        //set the "contecnt-Dispositions" header to force download
-        $headers = [
-            'Content-Disposition' => 'attachment; filename"'.$filename.'"',
-            'Content-Type' => 'application/pdf'
-        ];
-
-        $docs = Response::file($docs_path_to_file,$headers);
-
-//        dd($docs);
-
-        return view('pages.company.profile-edit',compact('user_data','docs'));
+        $this->log_activity_services->add_activity();
+        return view('pages.company.profile-edit',compact('user_data'));
     }
 
-    public function company_edit_profile_store(Request $request){
-        dd($request->all());
+
+    /**
+     * @param CompanyUpdateRequest $request
+     * @return RedirectResponse
+     */
+    public function company_edit_profile_store(CompanyUpdateRequest $request): RedirectResponse
+    {
+        $res = $this->company_services->update_company($request);
+        $this->log_activity_services->add_activity();
+        if ($res){
+            return redirect()->route('company_edit')->with('success', 'Your profile update Successfully');
+        }
+        return redirect()->route('company_edit')->with('error', 'Your profile Not update please try again after few time');
     }
 
     public function update_login_info($company_data,$request){

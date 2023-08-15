@@ -20,12 +20,14 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="user_activities" class="table table-striped table-bordered text-nowrap w-100">
+                        <table id="activities" class="table table-striped table-bordered text-nowrap w-100">
                             <thead>
                             <tr>
                                 <th class="wd-15p">Sr.No</th>
                                 <th class="wd-15p">User</th>
                                 <th class="wd-15p">Subject</th>
+                                <th class="wd-15p">URL</th>
+                                <th class="wd-15p">Method</th>
                                 <th class="wd-15p">IP Address</th>
                                 <th class="wd-15p">System</th>
                                 <th class="wd-10p">Browser</th>
@@ -49,6 +51,7 @@
 
 @section('script')
     <script>
+        {{--console.log(@json($user_data));--}}
         var activities = @json($activities);
         var userData = @json($user_data);
     </script>

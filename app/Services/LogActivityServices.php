@@ -9,6 +9,9 @@ use Jenssegers\Agent\Agent;
 
 class LogActivityServices{
 
+    /**
+     * @return bool
+     */
     public function add_activity(): bool
     {
         $request = Request::capture();
@@ -38,7 +41,13 @@ class LogActivityServices{
         }
     }
 
-    public function get_metadata($request){
+
+    /**
+     * @param $request
+     * @return false|string
+     */
+    public function get_metadata($request): bool|string
+    {
         $agent = new Agent();
 
         $user_agent_data = [

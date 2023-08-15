@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class CompanyRegisterRequest extends FormRequest
+class CompanyUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,19 +22,22 @@ class CompanyRegisterRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user_data = session('company_data');
         return [
             'name'                      =>          'required',
             'owner_name'                =>          'required',
-            'email'                     =>          'required|unique:companies,email',
-            'password'                  =>          'required|min:6|confirmed',
-            'address'                   =>          'required|max:100',
+            'email'                     =>          ['required',
+                                                        Rule::unique('companies','email')->ignore($user_data['id'])
+            ],
+            'password'                  =>          'nullable|min:6|confirmed',
+            'address'                   =>          'nullable|max:100',
             'industry'                  =>          'required',
             'country'                   =>          'required',
             'city'                      =>          'required',
             'phone'                     =>          'nullable|numeric|min:0',
             'description'               =>          'nullable|max:250',
             'website_url'               =>          'nullable|max:50',
-            'docs'                      =>          'nullable|mimes:pdf',
+//            'docs'                      =>          'nullable|mimes:pdf',
         ];
     }
 
@@ -44,7 +48,7 @@ class CompanyRegisterRequest extends FormRequest
             'owner_name.required'      => 'Please enter the Owner name.',
             'email.required'           => 'Please enter the email.',
             'email.unique'             => 'The email address is already taken.',
-            'password.required'        => 'Please enter the password.',
+//            'password.required'        => 'Please enter the password.',
             'password.confirmed'       => 'Passwords do not match.',
             'address.required'         => 'Please enter the address.',
             'industry.required'        => 'Please enter the industry.',

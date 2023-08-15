@@ -32,6 +32,17 @@
                     @endforeach
                 @endif
 
+                    @if(session()->has('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if(session()->has('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                 <form class="card" method="POST" action="{{route('company_edit')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="card-header">
@@ -45,21 +56,21 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label">Company Name</label>
-                                    <input name="name" type="text" class="form-control"  placeholder="Company Name" required>
+                                    <input name="name" type="text" class="form-control"  placeholder="Company Name" value="{{$user_data['name']}}" required>
                                 </div>
                             </div>
 
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label">Company Owner Name</label>
-                                    <input name="owner_name" type="text" class="form-control"  placeholder="Company Owner Name" required>
+                                    <input name="owner_name" type="text" class="form-control"  placeholder="Company Owner Name" value="{{$user_data['owner_name']}}" required>
                                 </div>
                             </div>
 
                             <div class="col-sm-6 col-md-4">
                                 <div class="form-group">
                                     <label class="form-label">Email address</label>
-                                    <input name="email" type="email" class="form-control" placeholder="Email" required>
+                                    <input name="email" type="email" class="form-control" placeholder="Email" value="{{$user_data['email']}}" required>
                                 </div>
                             </div>
 
@@ -67,21 +78,21 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label">City Name</label>
-                                    <input name="city" type="text" class="form-control"  placeholder="City Name" required>
+                                    <input name="city" type="text" class="form-control"  placeholder="City Name" value="{{$user_data['city']}}" required>
                                 </div>
                             </div>
 
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label">Country Name</label>
-                                    <input name="country" type="text" class="form-control"  placeholder="Country Name" required>
+                                    <input name="country" type="text" class="form-control"  placeholder="Country Name" value="{{$user_data['country']}}" required>
                                 </div>
                             </div>
 
                             <div class="col-sm-6 col-md-4">
                                 <div class="form-group">
                                     <label class="form-label">Industry</label>
-                                    <input name="industry" type="text" class="form-control" placeholder="Enter Industry Type" required>
+                                    <input name="industry" type="text" class="form-control" placeholder="Enter Industry Type" value="{{$user_data['industry']}}" required>
                                 </div>
                             </div>
 
@@ -89,14 +100,14 @@
                             <div class="col-sm-6 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">phone</label>
-                                    <input name="phone" type="number" class="form-control" placeholder="Company phone" min="0" oninput="validity.valid||(value='');">
+                                    <input name="phone" type="number" class="form-control" placeholder="Company phone" min="0" oninput="validity.valid||(value='');" value="{{$user_data['phone']}}">
                                 </div>
                             </div>
 
                             <div class="col-sm-6 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Website</label>
-                                    <input name="website_url" class="form-control" placeholder="http://splink.com">
+                                    <input name="website_url" class="form-control" placeholder="http://splink.com" value="{{$user_data['website_url']}}">
                                 </div>
                             </div>
 
@@ -104,15 +115,15 @@
                             {{--     4th Row     --}}
                             <div class="col-sm-6 col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Password</label>
-                                    <input name="password" type="password" class="form-control" placeholder="Password" required>
+                                    <label class="form-label">New Password</label>
+                                    <input name="password" type="password" class="form-control" placeholder="Password">
                                 </div>
                             </div>
 
                             <div class="col-sm-6 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Confirm Password</label>
-                                    <input name="password_confirmation" type="password" class="form-control" placeholder="Confirm Password" required>
+                                    <input name="password_confirmation" type="password" class="form-control" placeholder="Confirm Password">
                                 </div>
                             </div>
 
@@ -120,7 +131,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="form-label">Address</label>
-                                    <input name="address" type="text" class="form-control" placeholder="Address" required>
+                                    <input name="address" type="text" class="form-control" placeholder="Address" value="{{$user_data['name']}}">
                                 </div>
                             </div>
 
@@ -128,33 +139,31 @@
                             <div class="col-md-12">
                                 <div class="form-group mb-0">
                                     <label class="form-label">About Me</label>
-                                    <textarea name="description" rows="5" class="form-control" placeholder="Enter About your description" ></textarea>
+                                    <textarea name="description" rows="5" class="form-control" placeholder="Enter About your description">{{$user_data['description']}}</textarea>
                                 </div>
                             </div>
 
                             {{--    7th Row     --}}
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="form-label">Upload Your Company Docs</div>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="docs" accept=".pdf">
-                                        <label class="custom-file-label">Choose file</label>
-                                    </div>
-                                </div>
+{{--                            <div class="col-md-12">--}}
+{{--                                <div class="form-group">--}}
+{{--                                    <div class="form-label">Upload Your Company Docs</div>--}}
+{{--                                    <div class="custom-file">--}}
+{{--                                        <input type="file" class="custom-file-input" name="docs" accept=".pdf">--}}
+{{--                                        <label class="custom-file-label">Choose file</label>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
 {{--                                <button id="show_pdf" class="btn btn-primary-light btn-block">View Docs file</button>--}}
-{{--                                <iframe id="pdf_iframe" style="display: none; width: 100%; height: 800px;"></iframe>--}}
-                            </div>
+{{--                            </div>--}}
 
                         </div>
                     </div>
 
                     <div class="card-footer text-center">
-                        <button type="submit" class="btn btn-primary-light btn-block">Register</button>
+                        <button type="submit" class="btn btn-primary-light btn-block">Update</button>
                     </div>
 
                 </form>
-                    <button id="show_pdf" class="btn btn-primary-light btn-block">View Docs file</button>
-                    <iframe id="pdf_iframe" style="display: none; width: 100%; height: 800px;"></iframe>
+{{--                    <button id="show_pdf" class="btn btn-primary-light btn-block">View Docs file</button>--}}
 
             </div>
         </div>
@@ -164,28 +173,5 @@
 
 @section('script')
     <script>
-        const show_pdf = document.getElementById('show_pdf');
-        // const pdf_iframe = document.getElementById('pdf_iframe');
-        {{--const docs = "{!! addslashes($docs) !!}" //use addslashes to escape the content--}}
-        {{--console.log({!! $docs !!});--}}
-            const pdf_blob = new Blob([atob("{!! base64_encode($docs) !!}")], { type: 'application/pdf'})
-
-        show_pdf.addEventListener('click',function (){
-            // set the iframe's src to the base64 encoded content
-            // pdf_iframe.src = 'data:application/pdf;base64,'+docs;
-
-
-            // Create a Blob URL for the PDF content and Set the iframe's src to Blob URL
-            // pdf_iframe.src = URL.createObjectURL(pdf_blob);
-            const pdf_url = URL.createObjectURL(pdf_blob);
-
-            window.open(pdf_url, '_blank');
-
-
-            // Display the iframe
-            // pdf_iframe.style.display = 'block';
-        })
-
-
     </script>
 @endsection

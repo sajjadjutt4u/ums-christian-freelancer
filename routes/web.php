@@ -43,7 +43,7 @@ Route::prefix('company')->group(function (){
     Route::group(['middleware' => 'company.auth'], function () {
         Route::get('/dashboard',[CompanyController::class,'company_dashboard'])->name('company_dashboard');
         Route::get('/activities',[CompanyController::class,'company_activities'])->name('company_activities');
-        Route::get('/edit-profile/{id?}',[CompanyController::class,'company_edit_profile'])->name('company_edit');
+        Route::get('/edit-profile/',[CompanyController::class,'company_edit_profile'])->name('company_edit');
         Route::post('/edit-profile',[CompanyController::class,'company_edit_profile_store'])->name('company_edit');
 
     });
@@ -73,7 +73,7 @@ Route::prefix('/user')->group(function (){
     Route::group(['middleware' => 'user.auth'], function () {
         Route::get('/dashboard',[UserController::class,'user_dashboard'])->name('user_dashboard');
         Route::get('/activities',[UserController::class,'user_activities'])->name('user_activities');
-        Route::get('/edit-profile/{id?}',[UserController::class,'user_edit_profile'])->name('user_edit');
+        Route::get('/edit-profile/',[UserController::class,'user_edit_profile'])->name('user_edit');
         Route::post('/edit-profile',[UserController::class,'user_edit_profile_store'])->name('user_edit');
 
     });

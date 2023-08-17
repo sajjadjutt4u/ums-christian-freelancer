@@ -17,7 +17,7 @@ class LogActivity extends Model
         'request_method',
         'ip',
         'metadata',
-        'User_Agent',
+        'user_agent',
     ];
 
     /**

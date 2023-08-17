@@ -32,7 +32,7 @@ class LogActivityServices{
                 'request_method' => $request->method(),
                 'ip' => $request->ip(),
                 'metadata' => $this->get_metadata($request),
-                'User_Agent' => $request->userAgent(),
+                'user_agent' => $request->userAgent(),
             ]);
 
             return true;

@@ -37,6 +37,8 @@ class LogActivityServices{
 
             return true;
         }catch (\Exception $e){
+            \Log::info($e->getMessage());
+            \Log::info($e->getTraceAsString());
             return false;
         }
     }

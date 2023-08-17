@@ -64,6 +64,8 @@ class CompanyController extends Controller
             $this->log_activity_services->add_activity();
             return redirect()->route('company_dashboard')->with('success', 'Your Account Register Successfully');
         }catch (\Exception $e){
+            \Log::info($e->getMessage());
+            \Log::info($e->getTraceAsString());
             return redirect()->route('company_register')->with('error', $e->getMessage());
         }
 
